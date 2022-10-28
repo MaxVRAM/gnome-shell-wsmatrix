@@ -170,23 +170,31 @@ class WorkspaceSwitcherPopup extends SwitcherPopup.SwitcherPopup {
             }
         }
 
+        let actionTriggered = false;
+
         for (var key in Meta.KeyBindingAction) {
             let value = Meta.KeyBindingAction[key];
             if (value == _action) {
                 key = key.toLowerCase();
                 if (key.startsWith('workspace_')) {
                     key = 'switch-to-workspace-' + key.replace('workspace_', '');
+                    actionTriggered = true;
                 }
 
                 if (key.startsWith('move_to_workspace_')) {
                     key = 'move-to-workspace-' + key.replace('move_to_workspace_', '');
+                    actionTriggered = true;
                 }
 
                 this._wm._showWorkspaceSwitcher(global.display, global.display.focus_window, key);
             }
         }
 
-        return Clutter.EVENT_PROPAGATE;
+        if (actionTriggered) {
+            return Clutter.EVENT_PROPAGATE;
+        } else {
+            this.fadeAndDestroy();
+        }
     }
 
     _finish(_timestamp) {
